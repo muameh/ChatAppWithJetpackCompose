@@ -42,7 +42,6 @@ import com.mehmetbaloglu.chatterapp.data.models.LogInState
 import com.mehmetbaloglu.chatterapp.navigation.ChatterScreens
 import com.mehmetbaloglu.chatterapp.ui.viewmodels.LogInViewModel
 
-@Preview
 @Composable
 fun LogInScreen(navController: NavController = rememberNavController()) {
     val logInViewModel: LogInViewModel = hiltViewModel()

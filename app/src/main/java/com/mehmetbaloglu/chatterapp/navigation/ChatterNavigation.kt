@@ -14,10 +14,10 @@ import com.mehmetbaloglu.chatterapp.ui.screens.SignUpScreen
 fun ChatterNavigation(){
     val navController: NavHostController = rememberNavController()
 
-    //val currentUser = FirebaseAuth.getInstance().currentUser
-    //val startDestination = if (currentUser != null) ChatterScreens.HomeScreen.name else ChatterScreens.LogInScreen.name
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val startDestination = if (currentUser != null) ChatterScreens.HomeScreen.name else ChatterScreens.LogInScreen.name
 
-    NavHost(navController = navController, startDestination = ChatterScreens.LogInScreen.name) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(route= ChatterScreens.LogInScreen.name){
             LogInScreen(navController)
