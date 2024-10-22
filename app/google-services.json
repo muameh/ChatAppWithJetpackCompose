@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "663733265198",
+    "project_id": "chatterapp-a4d3b",
+    "storage_bucket": "chatterapp-a4d3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663733265198:android:043894e5136a9635ad50bf",
+        "android_client_info": {
+          "package_name": "com.mehmetbaloglu.chatterapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjZ8wZYFb8Wwi2B1F8gMjOovBMlu1joMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
