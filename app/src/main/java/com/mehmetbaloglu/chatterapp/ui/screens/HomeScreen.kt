@@ -106,7 +106,6 @@ fun ChannelCard(
             .fillMaxWidth()
             .clickable { navController.navigate("ChatScreen/${channel.id}") }
     ) {
-
         Text(
             text = channel.name,
             fontSize = 20.sp,

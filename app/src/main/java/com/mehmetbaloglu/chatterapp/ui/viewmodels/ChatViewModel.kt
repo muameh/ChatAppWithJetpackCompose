@@ -32,7 +32,8 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             imageUrl = null,
             senderName = Firebase.auth.currentUser?.displayName ?: ""
         )
-        firebaseDatabase.getReference("messages").child(channelID).push().setValue(message)
+        //firebaseDatabase.getReference("messages").child(channelID).push().setValue(message)
+        firebaseDatabase.reference.child("messages").child(channelID).push().setValue(message)
     }
 
     fun listenForMessages(channelID: String) {

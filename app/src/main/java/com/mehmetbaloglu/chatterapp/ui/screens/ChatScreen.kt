@@ -3,6 +3,7 @@ package com.mehmetbaloglu.chatterapp.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,22 +41,20 @@ import com.mehmetbaloglu.chatterapp.ui.viewmodels.ChatViewModel
 @Composable
 fun ChatScreen(navController: NavController, channelID: String) {
     val chatViewModel = hiltViewModel<ChatViewModel>()
-    LaunchedEffect(key1 = true) {
-        chatViewModel.listenForMessages(channelID = channelID)
-    }
+    LaunchedEffect(key1 = true) { chatViewModel.listenForMessages(channelID = channelID) }
     val messages = chatViewModel.messages.collectAsState()
-    ChatMessage(
-        messages = messages.value,
-        onSendMessage = { message ->
-            chatViewModel.sendMessage(channelID, message)
+
+    Scaffold { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            ChatMessage(
+                messages = messages.value,
+                onSendMessage = { message ->
+                    chatViewModel.sendMessage(channelID, message)
+                }
+            )
         }
-    )
 
-
-
-
-
-
+    }
 }
 
 @Composable
@@ -105,25 +105,24 @@ fun ChatMessage(messages: List<Message>, onSendMessage: (String) -> Unit) {
     }
 }
 
+
 @Composable
 fun ChatBuble(message: Message) {
     val isCurrentUser = message.senderId == Firebase.auth.currentUser?.uid
 
     val bubleColor = if (isCurrentUser) Color.Blue else Color.Green
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Bottom
+            .padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
-        val alignment = if (isCurrentUser) Alignment.CenterStart else Alignment.CenterEnd
+        val alignment = if (!isCurrentUser) Alignment.CenterStart else Alignment.CenterEnd
         Box(
             modifier = Modifier
                 .padding(8.dp)
-                .background(color = bubleColor, shape = RoundedCornerShape(8.dp)),
-            contentAlignment = alignment
+                .background(color = bubleColor, shape = RoundedCornerShape(8.dp))
+                .align(alignment),
         ) {
             Text(text = message.message, color = Color.White, modifier = Modifier.padding(8.dp))
 
