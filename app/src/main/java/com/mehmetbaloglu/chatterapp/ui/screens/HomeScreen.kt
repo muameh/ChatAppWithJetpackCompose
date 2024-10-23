@@ -35,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mehmetbaloglu.chatterapp.data.models.Channel
 import com.mehmetbaloglu.chatterapp.ui.viewmodels.HomeViewModel
@@ -86,28 +85,26 @@ fun HomeScreen(navController: NavController) {
     if (addChannelDialog.value) {
         ModalBottomSheet(
             onDismissRequest = { addChannelDialog.value = false },
-            sheetState= sheetState
-        ){
-            AddChannelDialog{
+            sheetState = sheetState
+        ) {
+            AddChannelDialog {
                 homeViewModel.addChannel(it)
                 addChannelDialog.value = false
             }
         }
     }
-
 }
 
-@Preview
 @Composable
 fun ChannelCard(
     navController: NavController = NavController(LocalContext.current),
-    channel: Channel = Channel("1", "Channel 1")
+    channel: Channel
 ) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { navController.navigate("channel/${channel.id}") }
+            .clickable { navController.navigate("ChatScreen/${channel.id}") }
     ) {
 
         Text(
@@ -116,8 +113,6 @@ fun ChannelCard(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(8.dp)
         )
-
-
     }
 }
 

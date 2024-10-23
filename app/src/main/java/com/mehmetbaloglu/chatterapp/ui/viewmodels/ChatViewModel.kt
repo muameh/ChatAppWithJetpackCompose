@@ -21,7 +21,7 @@ class ChatViewModel @Inject constructor() : ViewModel() {
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val messages = _messages.asStateFlow()
 
-    fun sendMessage(channelID: String, messageText: String){
+    fun sendMessage(channelID: String, messageText: String) {
         val message = Message(
             id = UUID.randomUUID().toString(),
             senderId = Firebase.auth.currentUser?.uid ?: "",
@@ -31,29 +31,29 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             senderImage = null,
             imageUrl = null,
             senderName = Firebase.auth.currentUser?.displayName ?: ""
-
         )
-
+        firebaseDatabase.getReference("messages").child(channelID).push().setValue(message)
     }
 
-    fun listenForMessages(channelID : String){
+    fun listenForMessages(channelID: String) {
         firebaseDatabase.getReference("messages")
             .child(channelID)
             .orderByChild("timestamp")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list  = mutableListOf<Message>()
+                    val list = mutableListOf<Message>()
                     snapshot.children.forEach { data ->
                         val message = data.getValue(Message::class.java)
                         message?.let { list.add(message) }
                     }
                     _messages.value = list
                 }
-                override fun onCancelled(error: DatabaseError) {
-                   //handle error
-                }
 
-            })
+                override fun onCancelled(error: DatabaseError) {
+                    //handle error
+                }
+            }
+            )
 
     }
 }
