@@ -41,6 +41,7 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             .child(channelID)
             .orderByChild("timestamp")
             .addValueEventListener(object : ValueEventListener {
+
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Message>()
                     snapshot.children.forEach { data ->
@@ -57,4 +58,8 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             )
 
     }
+
+
+
+
 }

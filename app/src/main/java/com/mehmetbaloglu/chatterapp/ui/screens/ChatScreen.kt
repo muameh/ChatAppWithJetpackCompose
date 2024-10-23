@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -41,8 +42,10 @@ import com.mehmetbaloglu.chatterapp.ui.viewmodels.ChatViewModel
 @Composable
 fun ChatScreen(navController: NavController, channelID: String) {
     val chatViewModel = hiltViewModel<ChatViewModel>()
-    LaunchedEffect(key1 = true) { chatViewModel.listenForMessages(channelID = channelID) }
     val messages = chatViewModel.messages.collectAsState()
+
+    LaunchedEffect(key1 = true) { chatViewModel.listenForMessages(channelID = channelID) }
+
 
     Scaffold { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
@@ -60,15 +63,18 @@ fun ChatScreen(navController: NavController, channelID: String) {
 @Composable
 fun ChatMessage(messages: List<Message>, onSendMessage: (String) -> Unit) {
     val hideKeyboardController = LocalSoftwareKeyboardController.current
-
     val msg = remember { mutableStateOf("") }
 
+
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
             items(messages) { message ->
                 ChatBuble(message)
             }
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()

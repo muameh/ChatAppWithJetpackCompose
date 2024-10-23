@@ -32,8 +32,7 @@ class LogInViewModel @Inject constructor() : ViewModel() {
             }
             .addOnSuccessListener {
                 _logInState.value = LogInState.Success
-                Log.d("loginSuccess", "Success")
-                _logInMessage.value = it.user?.email
+                _logInMessage.value = "Welcome, ${it.user?.displayName}"
             }
     }
 

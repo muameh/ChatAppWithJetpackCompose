@@ -88,7 +88,7 @@ fun HomeScreen(navController: NavController) {
             sheetState = sheetState
         ) {
             AddChannelDialog {
-                homeViewModel.addChannel(it)
+                homeViewModel.addChannelForRealTime(it)
                 addChannelDialog.value = false
             }
         }
