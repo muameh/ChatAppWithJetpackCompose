@@ -21,6 +21,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _channels = MutableStateFlow<List<Channel>>(emptyList())
     val channels = _channels.asStateFlow()
 
+    private val _channelAddedMessage = MutableStateFlow<String?>(null)
+    val channelAddedMessage = _channelAddedMessage.asStateFlow()
+
     init {
         getChannelsInRealTime()
     }
@@ -30,7 +33,6 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             val channelList = mutableListOf<Channel>()
             snapshot.children.forEach { data ->
                 val channel = Channel(data.key.toString(), data.value.toString())
-                Log.d("channel", channel.toString())
                 channelList.add(channel)
             }
             _channels.value = channelList
@@ -38,22 +40,22 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun getChannelsInRealTime() {
-        firebaseDatabase.getReference("channels").addValueEventListener(object :
-            ValueEventListener {
+        firebaseDatabase.getReference("channels")
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                val channelList = mutableListOf<Channel>()
-                snapshot.children.forEach { data ->
-                    val channel = Channel(data.key.toString(), data.value.toString())
-                    Log.d("channel", channel.toString())
-                    channelList.add(channel)
+                    val channelList = mutableListOf<Channel>()
+                    snapshot.children.forEach { data ->
+                        val channel = Channel(data.key.toString(), data.value.toString())
+                        Log.d("channel", channel.toString())
+                        channelList.add(channel)
+                    }
+                    _channels.value = channelList
                 }
-                _channels.value = channelList
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseError", "Error fetching data: ${error.message}")
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    _channelAddedMessage.value = "Error fetching data: ${error.message}"
+                }
+            })
     }
 
 
@@ -70,13 +72,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         if (key != null) {
             firebaseDatabase.getReference("channels").child(key).setValue(channelName)
                 .addOnSuccessListener {
-                    Log.d("AddChannel", "Channel successfully added")
-                }
-                .addOnFailureListener { error ->
-                    Log.e("AddChannelError", "Error adding channel: ${error.message}")
+                    _channelAddedMessage.value = "$channelName successfully added!"
+                }.addOnFailureListener { error ->
+                    _channelAddedMessage.value = "Error adding channel: ${error.message}"
                 }
         }
     }
-
 }
 
