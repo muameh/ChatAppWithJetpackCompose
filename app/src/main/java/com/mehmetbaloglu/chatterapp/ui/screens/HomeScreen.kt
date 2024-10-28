@@ -5,16 +5,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -84,7 +86,7 @@ fun HomeScreen(navController: NavController) {
                 TextField(
                     value = "",
                     onValueChange = {},
-                    placeholder = {Text("Search...")},
+                    placeholder = { Text("Search...") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
@@ -98,14 +100,21 @@ fun HomeScreen(navController: NavController) {
                         focusedContainerColor = Color.White,
                     ),
                     textStyle = TextStyle(color = Color.Black),
-                    trailingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = "search icon")}
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "search icon"
+                        )
+                    }
                 )
                 LazyColumn() {
                     item {
-
                     }
                     items(channels.value) { channel ->
-                        ChannelCard(navController, channel)
+                        ChannelCard(
+                            onClick = {navController.navigate("ChatScreen/${channel.id}")},
+                            channelName = channel
+                        )
                     }
                 }
             }
@@ -125,29 +134,45 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
+// navController.navigate("ChatScreen/${channelName.id}")
 @Composable
-fun ChannelCard(
-    navController: NavController,
-    channelName: Channel,
-) {
-    Card(
+fun ChannelCard(onClick: (String) -> Unit = {}, channelName: Channel ) {
+    Row(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(horizontal = 16.dp, vertical = 2.dp)
             .fillMaxWidth()
-            .clickable { navController.navigate("ChatScreen/${channelName.id}") }
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.DarkGray)
+            .clickable { onClick(channelName.id) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        Box(
+            modifier =
+            Modifier
+                .padding(8.dp)
+                .size(70.dp)
+                .clip(CircleShape)
+                .background(Color.Yellow.copy(alpha = 0.3f))
+        ){
+            Text(
+                text = channelName.name.get(0).toString().uppercase(),
+                color = Color.White,
+                style = TextStyle(fontSize = 35.sp),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
         Text(
             text = channelName.name,
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.White
         )
+
     }
 }
-
-
-
 
 @Composable
 fun AddChannelDialog(onAddChannel: (String) -> Unit) {
