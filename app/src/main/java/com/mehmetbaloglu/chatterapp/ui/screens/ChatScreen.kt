@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,6 +80,7 @@ fun ChatMessage(messages: List<Message>, onSendMessage: (String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
+                .padding(bottom = 64.dp),
         ) {
             items(messages) { message ->
                 ChatBuble(message)
@@ -89,8 +91,8 @@ fun ChatMessage(messages: List<Message>, onSendMessage: (String) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(8.dp)
-                .background(Color.LightGray),
+                .background(Color.DarkGray)
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
@@ -116,7 +118,6 @@ fun ChatMessage(messages: List<Message>, onSendMessage: (String) -> Unit) {
                     contentDescription = "send icon"
                 )
             }
-
         }
     }
 }
@@ -140,25 +141,18 @@ fun ChatBuble(message: Message) {
                 .align(alignment),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!isCurrentUser){
-                Image(
-                    painter = painterResource(id = R.drawable.person_with_glasses),
-                    contentDescription = "userImage",
-                    modifier = Modifier.size(40.dp).clip(CircleShape),
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-            }
             Text(
                 text = message.message.trim(),
                 color = Color.White,
                 modifier =
                 Modifier
-                    .background(color = bubleColor, shape = RoundedCornerShape(8.dp))
-                    .padding(8.dp)
+                    .background(
+                        color = bubleColor,
+                        shape = RoundedCornerShape(8.dp, 8.dp, 8.dp, 8.dp)
+                    )
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
 
                 )
-
         }
-
     }
 }
