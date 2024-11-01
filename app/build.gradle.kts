@@ -110,6 +110,9 @@ dependencies {
     //coil
     //implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01") <- bu versiyon hata verdi?!
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Firebase Cloud Messaging bağımlılığı
+    implementation("com.google.firebase:firebase-messaging")
 }
 
 // Allow references to generated code
