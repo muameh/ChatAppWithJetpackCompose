@@ -49,3 +49,20 @@ The application is based on **MVVM architecture** combined with a **clean archit
 1. **Clone the repository**:
    ```bash
    https://github.com/muameh/ChatAppWithJetpackCompose.git
+
+
+## Screenshots
+
+Below are some screenshots of the app in action:
+
+![Main Screen](screenshts/Screenshot_1730732845.png)
+![Main Screen](screenshts/Screenshot_1730732866.png)
+![Main Screen](screenshts/Screenshot_1730732873.png)
+![Main Screen](screenshts/Screenshot_1730732908.png)
+![Main Screen](screenshts/Screenshot_1730732913.png)
+![Main Screen](screenshts/Screenshot_1730732924.png)
+![Main Screen](screenshts/Screenshot_1730730323.png)
+![Main Screen](screenshts/Screenshot_1730732947.png)
+
+
+

@@ -1,6 +1,8 @@
 package com.mehmetbaloglu.chatterapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,8 +17,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -33,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +57,7 @@ fun HomeScreen(navController: NavController) {
     val homeViewModel = hiltViewModel<HomeViewModel>()
     val channels = homeViewModel.channels.collectAsState()
     val channelMessages = homeViewModel.channelAddedMessage.collectAsState()
+    val logoutMessage = homeViewModel.logoutMessage.collectAsState()
 
     val addChannelDialog = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -62,27 +69,57 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(10.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF6ac1f0))
+                    .background(Color(0xFF45ab34))
                     .clickable { addChannelDialog.value = true }
             ) {
-                Text(
-                    text = "Add Channel",
-                    color = Color.White,
-                    modifier = Modifier.padding(8.dp)
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    tint = Color.White,
+                    contentDescription = "plus icon",
+                    modifier = Modifier.padding(18.dp)
                 )
+
             }
         },
         containerColor = Color.Black,
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column {
-                Text(
-                    text = "Channels",
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray,
-                    style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Black),
-                    modifier = Modifier.padding(16.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Channels",
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Black),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Button(
+                        onClick = {
+                            homeViewModel.logOut()
+                            logoutMessage.value?.let {
+                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                            }
+                            // Log out sonrası LoginScreen'e yönlendirme
+                            navController.navigate("LogInScreen") {
+                                // Tüm geçmişi temizle
+                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                launchSingleTop = true // Bu, LoginScreen'i yeniden oluşturmamak için kullanılır
+                            }
+                        },
+                        shape = RectangleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.LightGray.copy(alpha = 0.3f),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = "Log Out")
+                    }
+                }
                 TextField(
                     value = "",
                     onValueChange = {},
@@ -90,15 +127,14 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
-                        .background(Color.Red),
+                        .clip(RoundedCornerShape(16.dp)) // Kenarları yuvarlat
+                        .background(Color.White) // Arka plan rengi beyaz yap
+                        .border(
+                            width = 2.dp,
+                            color = Color(0xFF45ab34),
+                            shape = RoundedCornerShape(16.dp)
+                        ),
                     singleLine = true,
-                    colors = TextFieldDefaults.colors().copy(
-                        focusedTextColor = Color.Red,
-                        focusedIndicatorColor = Color.Red,
-                        unfocusedTextColor = Color.White,
-                        unfocusedIndicatorColor = Color.White,
-                        focusedContainerColor = Color.White,
-                    ),
                     textStyle = TextStyle(color = Color.Black),
                     trailingIcon = {
                         Icon(
@@ -112,8 +148,9 @@ fun HomeScreen(navController: NavController) {
                     }
                     items(channels.value) { channel ->
                         ChannelCard(
-                            onClick = {navController.navigate("ChatScreen/${channel.id}")},
-                            channelName = channel
+                            onClick = { navController.navigate("ChatScreen/${channel.id}") },
+                            channelName = channel,
+                            onDeleteClick = { homeViewModel.deleteChannel(channel.id) }
                         )
                     }
                 }
@@ -134,9 +171,12 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-// navController.navigate("ChatScreen/${channelName.id}")
 @Composable
-fun ChannelCard(onClick: (String) -> Unit = {}, channelName: Channel ) {
+fun ChannelCard(
+    onClick: (String) -> Unit = {},
+    channelName: Channel,
+    onDeleteClick: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 2.dp)
@@ -150,10 +190,10 @@ fun ChannelCard(onClick: (String) -> Unit = {}, channelName: Channel ) {
             modifier =
             Modifier
                 .padding(8.dp)
-                .size(70.dp)
+                .size(50.dp)
                 .clip(CircleShape)
-                .background(Color.Yellow.copy(alpha = 0.3f))
-        ){
+                .background(Color(0xFF45ab34))
+        ) {
             Text(
                 text = channelName.name.get(0).toString().uppercase(),
                 color = Color.White,
@@ -162,14 +202,32 @@ fun ChannelCard(onClick: (String) -> Unit = {}, channelName: Channel ) {
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        Text(
-            text = channelName.name,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = channelName.name,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = "delete icon",
+                modifier = Modifier
+                    .padding(19.dp)
+                    .size(30.dp)
+                    .clickable { onDeleteClick() },
+                tint = Color.Red
+            )
+        }
+
 
     }
 }

@@ -2,6 +2,7 @@ package com.mehmetbaloglu.chatterapp.ui.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -24,8 +25,16 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _channelAddedMessage = MutableStateFlow<String?>(null)
     val channelAddedMessage = _channelAddedMessage.asStateFlow()
 
+    private val _logoutMessage = MutableStateFlow<String?>(null)
+    val logoutMessage = _logoutMessage.asStateFlow()
+
     init {
         getChannelsInRealTime()
+    }
+
+    fun logOut() {
+        Firebase.auth.signOut()
+        _logoutMessage.value = "User has successfully logged out."
     }
 
     private fun getChannels() {
@@ -78,5 +87,16 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 }
         }
     }
+
+    fun deleteChannel(channelId: String) {
+        firebaseDatabase.getReference("channels").child(channelId).removeValue()
+            .addOnSuccessListener {
+                _channelAddedMessage.value = "Channel successfully deleted!"
+            }
+            .addOnFailureListener { error ->
+                _channelAddedMessage.value = "Error deleting channel: ${error.message}"
+            }
+    }
+
 }
 
